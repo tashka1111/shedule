@@ -1,0 +1,77 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #ffe492;
+    color: white;
+    padding: 15px;
+    font-size: 24px;
+}
+
+main {
+    padding: 20px;
+}
+
+
+table {
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #ffe492;
+    color: white;
+}
+
+.lesson {
+    background-color: #e8f5e9; /* Светло-зелёный */
+}
+
+.homework {
+    color: #d4ffd5; /* Красный цвет для ДЗ */
+    font-style: italic;
+}
+
+td[contenteditable="true"] {
+    cursor: pointer;
+}
+
+td[contenteditable="true"]:focus {
+    outline: 2px solid #ffe492;
+    background-color: #dcedc8; /* Чуть темнее при фокусе */
+}
+
+footer {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #ffe492;
+    color: white;
+}
+#zeroLessonToggle, #zeroLessonDay {
+    font-size: 20px; /* Увеличиваем шрифт */
+    padding: 10px 15px; /* Делаем кнопки больше */
+    border-radius: 8px; /* Скругляем углы */
+    border: 2px solid #ffe492; /* Зеленая рамка */
+    background-color: #ffffff; /* Белый фон */
+    cursor: pointer; /* Показываем, что можно кликнуть */
+}
+
+#zeroLessonToggle:focus, #zeroLessonDay:focus {
+    outline: 3px solid #81c784; /* Подсветка при выборе */
+}
