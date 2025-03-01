@@ -7,7 +7,7 @@ body {
 }
 
 header {
-    background-color: #ffe492;
+    background-color: #03ffcd;
     color: white;
     padding: 15px;
     font-size: 24px;
@@ -35,7 +35,7 @@ th, td {
 }
 
 th {
-    background-color: #ffe492;
+    background-color: #03ffcd;
     color: white;
 }
 
@@ -53,21 +53,21 @@ td[contenteditable="true"] {
 }
 
 td[contenteditable="true"]:focus {
-    outline: 2px solid #ffe492;
+    outline: 2px solid #03ffcd;
     background-color: #dcedc8; /* Чуть темнее при фокусе */
 }
 
 footer {
     margin-top: 20px;
     padding: 10px;
-    background-color: #ffe492;
+    background-color: #03ffcd;
     color: white;
 }
 #zeroLessonToggle, #zeroLessonDay {
     font-size: 20px; /* Увеличиваем шрифт */
     padding: 10px 15px; /* Делаем кнопки больше */
     border-radius: 8px; /* Скругляем углы */
-    border: 2px solid #ffe492; /* Зеленая рамка */
+    border: 2px solid #03ffcd; /* Зеленая рамка */
     background-color: #ffffff; /* Белый фон */
     cursor: pointer; /* Показываем, что можно кликнуть */
 }
