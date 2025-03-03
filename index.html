@@ -18,6 +18,14 @@
     </header>
 
     <main>
+        <div class="table-controls">
+            <button id="createTable">Создать таблицу</button>
+            <select id="tableSelect">
+                <option value="">Выберите расписание</option>
+            </select>
+            <button id="deleteTable" style="display: none;">Удалить таблицу</button>
+        </div>
+        
         <div class="settings" style="text-align: center; display: flex; flex-direction: column; align-items: center;">
             <label for="zeroLessonToggle">есть ли у вас нулевой урок?</label>
             <select id="zeroLessonToggle">
@@ -34,7 +42,6 @@
             <option value="Чт">четверг</option>
             <option value="Пт">пятница</option>
             <option value="Сб">суббота</option>
-            <option value="Вс">воскресенье</option>
         </select>
     
         <table>
@@ -47,7 +54,6 @@
                     <th>Чт</th>
                     <th>Пт</th>
                     <th>Сб</th>
-                    <th>Вс</th>
                 </tr>
             </thead>
             <tbody id="schedule"></tbody>
