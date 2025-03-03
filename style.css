@@ -7,7 +7,7 @@ body {
 }
 
 header {
-    background-color: #03ffcd;
+    background-color: #9EE8BE;
     color: white;
     padding: 15px;
     font-size: 24px;
@@ -29,22 +29,22 @@ table {
 }
 
 th, td {
-    border: 1px solid #ddd;
+    border: 1px solid #9EE1E8;
     padding: 10px;
     text-align: center;
 }
 
 th {
-    background-color: #03ffcd;
+    background-color: #9EE8BE;
     color: white;
 }
 
 .lesson {
-    background-color: #e8f5e9; /* Светло-зелёный */
+    background-color: #9DE8D7; /* Светло-зелёный */
 }
 
 .homework {
-    color: #d4ffd5; /* Красный цвет для ДЗ */
+    color: #9EE8A4; /* Красный цвет для ДЗ */
     font-style: italic;
 }
 
@@ -53,25 +53,44 @@ td[contenteditable="true"] {
 }
 
 td[contenteditable="true"]:focus {
-    outline: 2px solid #03ffcd;
-    background-color: #dcedc8; /* Чуть темнее при фокусе */
+    outline: 2px solid #9EE8BE;
+    background-color: #dffffd; /* Чуть темнее при фокусе */
 }
 
 footer {
     margin-top: 20px;
     padding: 10px;
-    background-color: #03ffcd;
+    background-color: #9EE8BE;
     color: white;
 }
 #zeroLessonToggle, #zeroLessonDay {
     font-size: 20px; /* Увеличиваем шрифт */
     padding: 10px 15px; /* Делаем кнопки больше */
     border-radius: 8px; /* Скругляем углы */
-    border: 2px solid #03ffcd; /* Зеленая рамка */
+    border: 2px solid #9EE8BE; /* Зеленая рамка */
     background-color: #ffffff; /* Белый фон */
     cursor: pointer; /* Показываем, что можно кликнуть */
 }
 
 #zeroLessonToggle:focus, #zeroLessonDay:focus {
     outline: 3px solid #81c784; /* Подсветка при выборе */
+}
+.table-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+#tableSelect, #createTable {
+    font-size: 18px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 2px solid #9EE8BE;
+    background-color: white;
+    cursor: pointer;
+}
+
+#tableSelect:focus, #createTable:focus {
+    outline: 3px solid #81c784;
 }
