@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <style>
+    label, select {
+        margin-bottom: 20px;
+        display: block;
+    }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расписание</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Моё расписание</h1>
+    </header>
+
+    <main>
+        <div class="table-controls">
+            <button id="createTable">Создать таблицу</button>
+            <select id="tableSelect">
+                <option value="">Выберите расписание</option>
+            </select>
+            <button id="deleteTable" style="display: none;">Удалить таблицу</button>
+        </div>
+        
+        <div class="settings" style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+            <label for="zeroLessonToggle">есть ли у вас нулевой урок?</label>
+            <select id="zeroLessonToggle">
+                <option value="no">нет</option>
+                <option value="yes">да</option>
+            </select>
+        </div>
+        
+        <label for="zeroLessonDay" id="zeroLessonLabel" style="display: none;">выберите день:</label>
+        <select id="zeroLessonDay" style="display: none;">
+            <option value="Пн">понедельник</option>
+            <option value="Вт">вторник</option>
+            <option value="Ср">среда</option>
+            <option value="Чт">четверг</option>
+            <option value="Пт">пятница</option>
+            <option value="Сб">суббота</option>
+        </select>
+    
+        <table>
+            <thead>
+                <tr>
+                    <th>Урок</th>
+                    <th>Пн</th>
+                    <th>Вт</th>
+                    <th>Ср</th>
+                    <th>Чт</th>
+                    <th>Пт</th>
+                    <th>Сб</th>
+                </tr>
+            </thead>
+            <tbody id="schedule"></tbody>
+        </table>
+    </main>
+    
+
+    <footer>
+        <p>&copy; исос</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
