@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>расписание</title>
+    <style>
+        h1 {
+            color: #fcfffc;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #b2d8b2;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .schedule-container {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #b2d8b2;
+            padding: 8px;
+            text-align: center;
+            background-color: white;
+        }
+        th {
+            background-color: #8fc78f;
+            color: white;
+        }
+        .cell-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        textarea {
+            width: 100%;
+            border: none;
+            resize: none;
+            font-size: 14px;
+            text-align: center;
+            background: transparent;
+            outline: none;
+        }
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            color: white;
+            background-color: #6da96d;
+        }
+        .reset-btn {
+            background-color: #a05d5d;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {    
+            background: rgba(0, 0, 0, 0);;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            width: 90%; /* Увеличил ширину */
+    max-width: 600px; /* Максимальная ширина */
+        }
+        .modal-content h2 {
+    color: #ffffff; /* Выбери любой цвет */
+    font-weight: bold;
+}
+
+.table-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Кнопки растягиваются */
+    gap: 10px;
+    width: 100%;
+}
+
+.table-list button {
+    width: 100%; /* Чтобы кнопки полностью занимали свои ячейки */
+    padding: 10px;
+    text-align: center;
+}
+
+.table-list div {
+    display: flex;
+    justify-content: center; /* Центрирует кнопки внутри */
+    gap: 10px;
+    width: 100%;
+}
+    </style>
+</head>
+<body>
+    <h1>расписание</h1>
+    <div id="auth-container">
+        <h2>Вход / Регистрация</h2>
+        <input type="text" id="username" placeholder="Логин">
+        <input type="password" id="password" placeholder="Пароль">
+        <button onclick="register()">Регистрация</button>
+        <button onclick="login()">Вход</button>
+        <p id="auth-message"></p>
+    </div>
+    
+    <div class="schedule-container" id="schedule-container" style="display:none;">
+        <table id="schedule">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Пн</th>
+                    <th>Вт</th>
+                    <th>Ср</th>
+                    <th>Чт</th>
+                    <th>Пт</th>
+                    <th>Сб</th>
+                </tr>
+            </thead>
+            <tbody id="schedule-body"></tbody>
+        </table>
+        <div class="controls">
+            <button onclick="showTableModal()">Выбрать таблицу</button>
+            <button onclick="addRow()">Добавить урок</button>
+            <button class="reset-btn" onclick="resetSchedule()">Сбросить</button>
+            <button onclick="logout()">Выйти</button>
+        </div>
+    </div>
+    <div class="modal" id="table-modal">
+        <div class="modal-content">
+            <h2>Выбор таблицы</h2>
+            <input type="text" id="new-table-name" placeholder="только 10 символов" maxlength="10" oninput="limitInput(this, 10)">
+            <button onclick="createTable()">Создать</button>
+            <div class="table-list" id="table-list"></div>
+            <button onclick="closeTableModal()">Закрыть</button>
+        </div>
+    </div>
+    <script>
+let currentTable = "";
+const scheduleBody = document.getElementById("schedule-body");
+
+// ✅ Получение текущего пользователя
+function getCurrentUser() {
+    return localStorage.getItem("loggedUser"); 
+}
+
+// ✅ Получение таблиц текущего пользователя
+function getUserTables() {
+    const user = getCurrentUser();
+    if (!user) return { tables: [], schedules: {} };
+
+    let allData = JSON.parse(localStorage.getItem("userData")) || {};
+    return allData[user] || { tables: [], schedules: {} };
+}
+
+// ✅ Сохранение данных пользователя
+function saveUserTables(data) {
+    const user = getCurrentUser();
+    if (!user) return;
+
+    let allData = JSON.parse(localStorage.getItem("userData")) || {};
+    allData[user] = data;
+    localStorage.setItem("userData", JSON.stringify(allData));
+}
+
+// ✅ Проверка, выбрана ли таблица
+function checkTableSelected() {
+    const addRowBtn = document.querySelector("button[onclick='addRow()']");
+    const resetBtn = document.querySelector("button[onclick='resetSchedule()']");
+    const isDisabled = !currentTable;
+    
+    addRowBtn.disabled = isDisabled;
+    resetBtn.disabled = isDisabled;
+}
+
+// ✅ Загрузка расписания
+function loadSchedule() {
+    const data = getUserTables();
+    scheduleBody.innerHTML = "";
+
+    if (!currentTable || !data.schedules[currentTable]) return;
+
+    data.schedules[currentTable].forEach(row => {
+        addRow(row, true);
+    });
+
+    checkTableSelected();
+}
+
+// ✅ Сброс расписания
+function resetSchedule() {
+    if (!currentTable) return;
+
+    let data = getUserTables();
+    data.schedules[currentTable] = [];
+    saveUserTables(data);
+
+    scheduleBody.innerHTML = "";
+}
+
+// ✅ Сохранение расписания
+function saveSchedule() {
+    if (!currentTable) return;
+
+    let data = getUserTables();
+    data.schedules[currentTable] = [];
+
+    document.querySelectorAll("#schedule-body tr").forEach(row => {
+        const rowData = [];
+        row.querySelectorAll(".cell-container").forEach(container => {
+            const subject = container.querySelectorAll("textarea")[0].value;
+            const homework = container.querySelectorAll("textarea")[1].value;
+            rowData.push({ subject, homework });
+        });
+        data.schedules[currentTable].push(rowData);
+    });
+
+    saveUserTables(data);
+}
+
+// ✅ Открытие/закрытие окна выбора таблицы
+function showTableModal() {
+    document.getElementById("table-modal").style.display = "flex";
+    updateTableList();
+}
+
+function closeTableModal() {
+    document.getElementById("table-modal").style.display = "none";
+}
+
+// ✅ Ограничение длины ввода
+function limitInput(input, maxLength) {
+    if (input.value.length > maxLength) {
+        input.value = input.value.substring(0, maxLength);
+    }
+}
+
+// ✅ Обновление списка таблиц
+function updateTableList() {
+    let data = getUserTables();
+    const list = document.getElementById("table-list");
+    list.innerHTML = data.tables.map(t => `
+        <div>
+            <button onclick="switchTable('${t}')">${t}</button>
+            ${t !== "default" ? `<button onclick="deleteTable('${t}')">❌</button>` : ""}
+        </div>
+    `).join("");
+
+    checkTableSelected();
+}
+
+// ✅ Добавление строки в расписание
+function addRow(rowData = [], isLoading = false) {
+    if (!currentTable) return;
+
+    const row = document.createElement("tr");
+    const numberCell = document.createElement("td");
+    numberCell.textContent = scheduleBody.children.length + 1;
+    row.appendChild(numberCell);
+
+    for (let i = 0; i < 6; i++) {
+        const cell = document.createElement("td");
+        const container = document.createElement("div");
+        container.classList.add("cell-container");
+
+        const subjectInput = document.createElement("textarea");
+        subjectInput.value = rowData[i]?.subject || "";
+        subjectInput.oninput = saveSchedule;
+
+        const homeworkInput = document.createElement("textarea");
+        homeworkInput.value = rowData[i]?.homework || "дз: ";
+        homeworkInput.oninput = saveSchedule;
+
+        container.appendChild(subjectInput);
+        container.appendChild(homeworkInput);
+        cell.appendChild(container);
+        row.appendChild(cell);
+    }
+
+    scheduleBody.appendChild(row);
+    if (!isLoading) saveSchedule();
+}
+
+// ✅ Создание новой таблицы
+function createTable() {
+    const name = document.getElementById("new-table-name").value.trim();
+    if (!name) return;
+
+    let data = getUserTables();
+    if (!data.tables.includes(name)) {
+        data.tables.push(name);
+        data.schedules[name] = [];
+        saveUserTables(data);
+    }
+
+    switchTable(name);
+    updateTableList();
+    document.getElementById("new-table-name").value = "";
+}   
+
+// ✅ Удаление таблицы
+function deleteTable(name) {
+    let data = getUserTables();
+    data.tables = data.tables.filter(t => t !== name);
+    delete data.schedules[name];
+
+    saveUserTables(data);
+
+    if (currentTable === name) {
+        currentTable = "";
+        localStorage.setItem("currentTable", "");
+    }
+
+    updateTableList();
+    loadSchedule();
+}
+
+// ✅ Переключение таблицы
+function switchTable(name) {
+    currentTable = name;
+    localStorage.setItem("currentTable", name);
+    loadSchedule();
+    closeTableModal();
+}
+
+// ✅ Регистрация пользователя
+function register() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    let users = JSON.parse(localStorage.getItem("users")) || {};
+
+    if (!username || !password) {
+        showMessage("Введите логин и пароль!");
+        return;
+    }
+    if (users[username]) {
+        showMessage("Такой пользователь уже существует!");
+        return;
+    }
+
+    users[username] = password;
+    localStorage.setItem("users", JSON.stringify(users));
+    showMessage("Регистрация успешна!");
+}
+
+// ✅ Вход пользователя
+function login() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    let users = JSON.parse(localStorage.getItem("users")) || {};
+
+    if (users[username] === password) {
+        localStorage.setItem("loggedUser", username);
+        showMessage("Вход выполнен!", true);
+        showSchedule();
+
+        loadUserTables(); // Загружаем таблицы пользователя
+    } else {
+        showMessage("Неверный логин или пароль!");
+    }
+}
+function loadUserTables() {
+    const userData = getUserTables();
+    
+    if (userData.tables.length > 0) {
+        updateTableList(); // Обновляем список таблиц в окне выбора
+        currentTable = userData.tables[0]; // Открываем первую таблицу
+        localStorage.setItem("currentTable", currentTable);
+        loadSchedule(); // Загружаем расписание таблицы
+    } else {
+        currentTable = "";
+        localStorage.setItem("currentTable", "");
+        scheduleBody.innerHTML = ""; // Очищаем расписание, если таблиц нет
+    }
+
+    checkTableSelected();
+}
+
+// ✅ Выход пользователя
+function logout() {
+    localStorage.removeItem("loggedUser");
+    location.reload();
+}
+
+// ✅ Вывод сообщения
+function showMessage(text, success = false) {
+    let message = document.getElementById("auth-message");
+    message.textContent = text;
+    message.style.color = success ? "green" : "red";
+}
+function showSchedule() {
+    document.getElementById("auth-container").style.display = "none";
+    document.getElementById("schedule-container").style.display = "block";
+
+    loadUserTables(); // Загружаем таблицы при входе
+}
+
+// ✅ Проверка авторизации при загрузке страницы
+window.onload = function() {
+    const user = getCurrentUser();
+    if (user) {
+        showSchedule();
+        
+        const userData = getUserTables();
+        if (userData.tables.length > 0) {
+            updateTableList(); // Обновляем список таблиц
+            currentTable = userData.tables[0]; // Открываем первую таблицу
+            localStorage.setItem("currentTable", currentTable);
+            loadSchedule(); // Загружаем расписание
+        }
+    } else {
+        checkTableSelected(); // Отключаем кнопки, если пользователь не вошел
+    }
+};
+
+
+
+    </script>
+</body>
+</html>
