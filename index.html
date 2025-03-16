@@ -87,30 +87,27 @@
             padding: 20px;
             border-radius: 8px;
             text-align: center;
-            width: 90%; /* Увеличил ширину */
-    max-width: 600px; /* Максимальная ширина */
+            width: 90%;
+    max-width: 600px;
         }
         .modal-content h2 {
-    color: #ffffff; /* Выбери любой цвет */
+    color: #ffffff;
     font-weight: bold;
 }
-
 .table-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Кнопки растягиваются */
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 10px;
     width: 100%;
 }
-
 .table-list button {
-    width: 100%; /* Чтобы кнопки полностью занимали свои ячейки */
+    width: 100%;
     padding: 10px;
     text-align: center;
 }
-
 .table-list div {
     display: flex;
-    justify-content: center; /* Центрирует кнопки внутри */
+    justify-content: center;
     gap: 10px;
     width: 100%;
 }
@@ -126,7 +123,6 @@
         <button onclick="login()">Вход</button>
         <p id="auth-message"></p>
     </div>
-    
     <div class="schedule-container" id="schedule-container" style="display:none;">
         <table id="schedule">
             <thead>
@@ -161,13 +157,9 @@
     <script>
 let currentTable = "";
 const scheduleBody = document.getElementById("schedule-body");
-
-// ✅ Получение текущего пользователя
 function getCurrentUser() {
     return localStorage.getItem("loggedUser"); 
 }
-
-// ✅ Получение таблиц текущего пользователя
 function getUserTables() {
     const user = getCurrentUser();
     if (!user) return { tables: [], schedules: {} };
@@ -175,8 +167,6 @@ function getUserTables() {
     let allData = JSON.parse(localStorage.getItem("userData")) || {};
     return allData[user] || { tables: [], schedules: {} };
 }
-
-// ✅ Сохранение данных пользователя
 function saveUserTables(data) {
     const user = getCurrentUser();
     if (!user) return;
@@ -185,8 +175,6 @@ function saveUserTables(data) {
     allData[user] = data;
     localStorage.setItem("userData", JSON.stringify(allData));
 }
-
-// ✅ Проверка, выбрана ли таблица
 function checkTableSelected() {
     const addRowBtn = document.querySelector("button[onclick='addRow()']");
     const resetBtn = document.querySelector("button[onclick='resetSchedule()']");
@@ -195,8 +183,6 @@ function checkTableSelected() {
     addRowBtn.disabled = isDisabled;
     resetBtn.disabled = isDisabled;
 }
-
-// ✅ Загрузка расписания
 function loadSchedule() {
     const data = getUserTables();
     scheduleBody.innerHTML = "";
@@ -209,8 +195,6 @@ function loadSchedule() {
 
     checkTableSelected();
 }
-
-// ✅ Сброс расписания
 function resetSchedule() {
     if (!currentTable) return;
 
@@ -220,8 +204,6 @@ function resetSchedule() {
 
     scheduleBody.innerHTML = "";
 }
-
-// ✅ Сохранение расписания
 function saveSchedule() {
     if (!currentTable) return;
 
@@ -240,25 +222,18 @@ function saveSchedule() {
 
     saveUserTables(data);
 }
-
-// ✅ Открытие/закрытие окна выбора таблицы
 function showTableModal() {
     document.getElementById("table-modal").style.display = "flex";
     updateTableList();
 }
-
 function closeTableModal() {
     document.getElementById("table-modal").style.display = "none";
 }
-
-// ✅ Ограничение длины ввода
 function limitInput(input, maxLength) {
     if (input.value.length > maxLength) {
         input.value = input.value.substring(0, maxLength);
     }
 }
-
-// ✅ Обновление списка таблиц
 function updateTableList() {
     let data = getUserTables();
     const list = document.getElementById("table-list");
@@ -271,57 +246,43 @@ function updateTableList() {
 
     checkTableSelected();
 }
-
-// ✅ Добавление строки в расписание
 function addRow(rowData = [], isLoading = false) {
     if (!currentTable) return;
-
     const row = document.createElement("tr");
     const numberCell = document.createElement("td");
     numberCell.textContent = scheduleBody.children.length + 1;
     row.appendChild(numberCell);
-
     for (let i = 0; i < 6; i++) {
         const cell = document.createElement("td");
         const container = document.createElement("div");
         container.classList.add("cell-container");
-
         const subjectInput = document.createElement("textarea");
         subjectInput.value = rowData[i]?.subject || "";
         subjectInput.oninput = saveSchedule;
-
         const homeworkInput = document.createElement("textarea");
         homeworkInput.value = rowData[i]?.homework || "дз: ";
         homeworkInput.oninput = saveSchedule;
-
         container.appendChild(subjectInput);
         container.appendChild(homeworkInput);
         cell.appendChild(container);
         row.appendChild(cell);
     }
-
     scheduleBody.appendChild(row);
     if (!isLoading) saveSchedule();
 }
-
-// ✅ Создание новой таблицы
 function createTable() {
     const name = document.getElementById("new-table-name").value.trim();
     if (!name) return;
-
     let data = getUserTables();
     if (!data.tables.includes(name)) {
         data.tables.push(name);
         data.schedules[name] = [];
         saveUserTables(data);
     }
-
     switchTable(name);
     updateTableList();
     document.getElementById("new-table-name").value = "";
-}   
-
-// ✅ Удаление таблицы
+}
 function deleteTable(name) {
     let data = getUserTables();
     data.tables = data.tables.filter(t => t !== name);
@@ -337,21 +298,16 @@ function deleteTable(name) {
     updateTableList();
     loadSchedule();
 }
-
-// ✅ Переключение таблицы
 function switchTable(name) {
     currentTable = name;
     localStorage.setItem("currentTable", name);
     loadSchedule();
     closeTableModal();
 }
-
-// ✅ Регистрация пользователя
 function register() {
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
     let users = JSON.parse(localStorage.getItem("users")) || {};
-
     if (!username || !password) {
         showMessage("Введите логин и пароль!");
         return;
@@ -360,24 +316,19 @@ function register() {
         showMessage("Такой пользователь уже существует!");
         return;
     }
-
     users[username] = password;
     localStorage.setItem("users", JSON.stringify(users));
     showMessage("Регистрация успешна!");
 }
-
-// ✅ Вход пользователя
 function login() {
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
     let users = JSON.parse(localStorage.getItem("users")) || {};
-
     if (users[username] === password) {
         localStorage.setItem("loggedUser", username);
         showMessage("Вход выполнен!", true);
         showSchedule();
-
-        loadUserTables(); // Загружаем таблицы пользователя
+        loadUserTables();
     } else {
         showMessage("Неверный логин или пароль!");
     }
@@ -386,26 +337,22 @@ function loadUserTables() {
     const userData = getUserTables();
     
     if (userData.tables.length > 0) {
-        updateTableList(); // Обновляем список таблиц в окне выбора
-        currentTable = userData.tables[0]; // Открываем первую таблицу
+        updateTableList();
+        currentTable = userData.tables[0];
         localStorage.setItem("currentTable", currentTable);
-        loadSchedule(); // Загружаем расписание таблицы
+        loadSchedule();
     } else {
         currentTable = "";
         localStorage.setItem("currentTable", "");
-        scheduleBody.innerHTML = ""; // Очищаем расписание, если таблиц нет
+        scheduleBody.innerHTML = "";
     }
 
     checkTableSelected();
 }
-
-// ✅ Выход пользователя
 function logout() {
     localStorage.removeItem("loggedUser");
     location.reload();
 }
-
-// ✅ Вывод сообщения
 function showMessage(text, success = false) {
     let message = document.getElementById("auth-message");
     message.textContent = text;
@@ -415,10 +362,8 @@ function showSchedule() {
     document.getElementById("auth-container").style.display = "none";
     document.getElementById("schedule-container").style.display = "block";
 
-    loadUserTables(); // Загружаем таблицы при входе
+    loadUserTables();
 }
-
-// ✅ Проверка авторизации при загрузке страницы
 window.onload = function() {
     const user = getCurrentUser();
     if (user) {
@@ -426,18 +371,15 @@ window.onload = function() {
         
         const userData = getUserTables();
         if (userData.tables.length > 0) {
-            updateTableList(); // Обновляем список таблиц
-            currentTable = userData.tables[0]; // Открываем первую таблицу
+            updateTableList();
+            currentTable = userData.tables[0];
             localStorage.setItem("currentTable", currentTable);
-            loadSchedule(); // Загружаем расписание
+            loadSchedule();
         }
     } else {
-        checkTableSelected(); // Отключаем кнопки, если пользователь не вошел
+        checkTableSelected();
     }
 };
-
-
-
     </script>
 </body>
 </html>
